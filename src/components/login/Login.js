@@ -55,7 +55,7 @@ componentDidMount(){
     }
   };
   // authSettings.onStateChange = this.pryvAuthStateChange();
-  var serviceInfoUrl = 'https://api.pryv.com/lib-js/demos/service-info.json';
+  var serviceInfoUrl = 'https://pryv.github.io/lib-js/demos/service-info.json?fbclid=IwAR2wEe1uGALAzj1IGPDlSzCXSiDOcwFH1wdMfogakPuGfsHkXQX3z08R8QU';
   (
     async function () {
     var service = await Pryv.Browser.setupAuth(authSettings, serviceInfoUrl);
