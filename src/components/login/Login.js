@@ -55,7 +55,9 @@ componentDidMount(){
     }
   };
   // authSettings.onStateChange = this.pryvAuthStateChange();
-  var serviceInfoUrl = 'https://reg.pryv.me/service/infos';
+  let serviceInfoUrl = 'https://reg.pryv.me/service/infos';
+  // override serviceInfo if provided in the url. 
+  serviceInfoUrl = Pryv.Browser.serviceInfoFromUrl() || serviceInfoUrl;
   (
     async function () {
     var service = await Pryv.Browser.setupAuth(authSettings, serviceInfoUrl);
