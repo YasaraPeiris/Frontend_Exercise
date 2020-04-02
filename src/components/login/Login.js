@@ -33,6 +33,7 @@ class Login extends React.Component {
 }
 
 
+
 componentDidMount(){
   var authSettings = {
     spanButtonID: 'pryv-button', // span id the DOM that will be replaced by the Service specific button
