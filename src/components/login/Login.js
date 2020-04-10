@@ -53,7 +53,6 @@ class Login extends React.Component {
     var authSettings = {
       spanButtonID: 'pryv-button', // span id the DOM that will be replaced by the Service specific button
       onStateChange: this.pryvAuthStateChange, // event Listener for Authentication steps
-      FunctionLocation : "login.js",
       authRequest: { // See: https://api.pryv.com/reference/#auth-request
         requestingAppId: 'pryv-interview-exercise',
         languageCode: 'en', // optional (default english)
