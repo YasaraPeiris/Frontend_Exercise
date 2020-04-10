@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+<head>
+  <title>Pryv - Javascript Lib</title>
+  <script src="https://api.pryv.com/lib-js/pryv.js"></script>
+  <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+  <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+</head>
+<body>
+  <span id="pryv-button"></span>
+  <div id='myDiv'><!-- Plotly chart will be drawn inside this DIV --></div>
+  <script>
+    var connection = null;
+
+    var authSettings = {
+      spanButtonID: 'pryv-button', // span id the DOM that will be replaced by the Service specific button
+      onStateChange: pryvAuthStateChange, // event Listener for Authentication steps
+      authRequest: { // See: https://api.pryv.com/reference/#auth-request
+        requestingAppId: 'pryv-interview-exercise',
+        languageCode: 'en', // optional (default english)
+        requestedPermissions: [
+          {
+            "streamId": "fitbit",
+			"defaultName": "Fitbit",
+			"level": "read"
+          }
+        ],
+        clientData: {
+          'app-web-auth:description': {
+            'type': 'note/txt', 'content': 'This is a consent message.'
+          }
+        }
+      }
+    };
+    
+    function pryvAuthStateChange(state) { // called each time the authentication state changed
+      console.log('##pryvAuthStateChange', state);
+      if (state.id === Pryv.Browser.AuthStates.AUTHORIZED) {
+        connection = new Pryv.Connection(state.apiEndpoint);
+        console.log('# Browser succeeded for user ' + connection.apiEndpoint);
+      }
+      if (state.id === Pryv.Browser.AuthStates.LOGOUT) {
+        connection = null;
+        console.log('# Logout');
+      }
+  }
+  let serviceInfoUrl = 'https://reg.pryv.me/service/info';
+
+  const now = (new Date()).getTime() / 1000;
+
+  //const queryParams = { fromTime: 0, toTime: now, limit: 10000};
+  const queryParams = { limit: 10000};
+  const events = [];
+  function forEachEvent(event) 
+  {
+    events.push(event);
+
+  }
+
+  function  createArray()
+  {
+    let x = [];
+    let y = [];
+    events.forEach(function(item){
+      console.log(item);
+      x.push(item.time);
+      y.push(item.content);
+})
+   
+    console.log(x);
+    console.log(y);
+    return x,y;
+  }
+
+  async function getEvents()
+  {
+
+try {
+  const result = await connection.getEventsStreamed(queryParams, forEachEvent);
+  console.log(result);
+  var xarr,yarr = createArray();
+  var trace1 = {
+  x:xarr,
+  y:yarr,
+  mode: 'lines+markers',
+  marker: {
+    color: 'rgb(128, 0, 128)',
+    size: 8
+  },
+  line: {
+    color: 'rgb(128, 0, 128)',
+    width: 1
+  }
+};
+var data = [trace1];
+
+var layout = {
+  title: 'Line and Scatter Styling graph for events in stream id fitbit'
+};
+
+Plotly.newPlot('myDiv', data, layout);
+} catch (e) {
+  // handle error
+}
+  }
+
+ 
+  
+  
+  // override serviceInfo if provided in the url. 
+  //serviceInfoUrl = serviceInfoUrl;
+  console.log(serviceInfoUrl);
+  (async function () {
+    const service = await Pryv.Browser.setupAuth(authSettings, serviceInfoUrl);
+    (await service.assets()).setAllDefaults();
+  })();
+
+  </script>
+  <button onclick="getEvents()">get Events</button>
+</body>
+</html>

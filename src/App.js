@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import AppRouter from './components/shared/routers/AppRouter.js';
 import './App.css';
+import Header from './components/common/Header.js'
 
 
 class App extends Component {
@@ -19,6 +20,7 @@ class App extends Component {
   render() {
     return (
       <div>
+        <Header height={"100"} />
         <AppRouter />
       </div>
     );
